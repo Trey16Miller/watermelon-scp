@@ -24,9 +24,9 @@ end
 if SERVER then
     function ENT:StartTouch(ent)
         if not IsValid(ent) or not ent:IsPlayer() then return end
-        if ent:GetNWBool("WMCursed", false) then return end
-        if WMCurse and WMCurse.InfectPlayer then
-            WMCurse.InfectPlayer(ent, self)
+        if ent:GetNWBool("WatermelonEffectOn", false) then return end
+        if WatermelonEffect and WatermelonEffect.InfectPlayer then
+            WatermelonEffect.InfectPlayer(ent, self)
         end
     end
 end

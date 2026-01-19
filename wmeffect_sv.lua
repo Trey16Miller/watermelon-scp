@@ -1,19 +1,19 @@
-AddCSLuaFile("autorun/wmcurse_cl.lua")
+AddCSLuaFile("autorun/watermelon_effect_cl.lua")
 
-util.AddNetworkString("WMCurse_Set")
+util.AddNetworkString("WatermelonEffect_Set")
 
-WMCurse = WMCurse or {}
+WatermelonEffect = WatermelonEffect or {}
 
 local function SendEffect(ply, on)
     if not IsValid(ply) then return end
-    net.Start("WMCurse_Set")
+    net.Start("WatermelonEffect_Set")
         net.WriteBool(on and true or false)
     net.Send(ply)
 end
 
 local function ClearTimers(ply)
     if not IsValid(ply) then return end
-    local id = "WMCurse_DOT_" .. ply:EntIndex()
+    local id = "WatermelonEffect_DOT_" .. ply:EntIndex()
     timer.Remove(id)
 end
 
@@ -21,7 +21,7 @@ local function RestorePlayer(ply)
     if not IsValid(ply) then return end
 
     SendEffect(ply, false)
-    ply:SetNWBool("WMCursed", false)
+    ply:SetNWBool("WatermelonEffectOn", false)
 
     if ply.WMOrigModel then
         ply:SetModel(ply.WMOrigModel)
@@ -44,7 +44,7 @@ local function TurnIntoWatermelon(ply)
     if not IsValid(ply) or not ply:Alive() then return end
 
     SendEffect(ply, false)
-    ply:SetNWBool("WMCursed", false)
+    ply:SetNWBool("WatermelonEffectOn", false)
 
     ply.WMOrigModel = ply.WMOrigModel or ply:GetModel()
 
@@ -70,11 +70,11 @@ local function TurnIntoWatermelon(ply)
     ply:SetRunSpeed(160)
 end
 
-function WMCurse.InfectPlayer(ply, sourceEnt)
+function WatermelonEffect.InfectPlayer(ply, sourceEnt)
     if not IsValid(ply) or not ply:Alive() then return end
-    if ply:GetNWBool("WMCursed", false) then return end
+    if ply:GetNWBool("WatermelonEffectOn", false) then return end
 
-    ply:SetNWBool("WMCursed", true)
+    ply:SetNWBool("WatermelonEffectOn", true)
     SendEffect(ply, true)
 
     ply.WMOrigModel = ply.WMOrigModel or ply:GetModel()
@@ -87,7 +87,7 @@ function WMCurse.InfectPlayer(ply, sourceEnt)
         ply:GetViewOffsetDucked()
     }
 
-    local id = "WMCurse_DOT_" .. ply:EntIndex()
+    local id = "WatermelonEffect_DOT_" .. ply:EntIndex()
     local startTime = CurTime()
     local transformAfter = 10
     local dmgPerTick = 2
@@ -99,7 +99,7 @@ function WMCurse.InfectPlayer(ply, sourceEnt)
             return
         end
 
-        if not ply:GetNWBool("WMCursed", false) then
+        if not ply:GetNWBool("WatermelonEffectOn", false) then
             ClearTimers(ply)
             return
         end
@@ -109,14 +109,14 @@ function WMCurse.InfectPlayer(ply, sourceEnt)
 
         if ply:Health() <= 1 then
             ply:SetHealth(1)
-            ply:SetNWBool("WMCursed", false)
+            ply:SetNWBool("WatermelonEffectOn", false)
             ClearTimers(ply)
             TurnIntoWatermelon(ply)
             return
         end
 
         if CurTime() - startTime >= transformAfter then
-            ply:SetNWBool("WMCursed", false)
+            ply:SetNWBool("WatermelonEffectOn", false)
             ClearTimers(ply)
             TurnIntoWatermelon(ply)
             return
@@ -124,14 +124,16 @@ function WMCurse.InfectPlayer(ply, sourceEnt)
     end)
 end
 
-hook.Add("PlayerDeath", "WMCurse_DeathCleanup", function(ply)
+hook.Add("PlayerDeath", "WatermelonEffect_DeathCleanup", function(ply)
     RestorePlayer(ply)
 end)
 
-hook.Add("PlayerSpawn", "WMCurse_SpawnCleanup", function(ply)
+hook.Add("PlayerSpawn", "WatermelonEffect_SpawnCleanup", function(ply)
     timer.Simple(0, function()
         if IsValid(ply) then
             RestorePlayer(ply)
         end
     end)
+end)
+
 end)

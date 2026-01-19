@@ -1,10 +1,10 @@
 local wm_on = false
 
-net.Receive("WMCurse_Set", function()
+net.Receive("WatermelonEffect_Set", function()
     wm_on = net.ReadBool()
 end)
 
-hook.Add("RenderScreenspaceEffects", "WMCurse_GreenScreen", function()
+hook.Add("RenderScreenspaceEffects", "WatermelonEffect_GreenScreen", function()
     if not wm_on then return end
 
     local cm = {}
@@ -19,4 +19,6 @@ hook.Add("RenderScreenspaceEffects", "WMCurse_GreenScreen", function()
     cm["$pp_colour_mulb"] = 0
 
     DrawColorModify(cm)
+end)
+
 end)
